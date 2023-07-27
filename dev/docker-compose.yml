@@ -13,7 +13,7 @@ services:
       - battle
 
   authentication:
-    image: phjppo0918/party-run-authentication
+    image: phjppo0918/party-run-authentication:latest
     container_name: authentication
     restart: always
     ports:
@@ -24,7 +24,7 @@ services:
       - redis
       
   matching:
-    image: phjppo0918/party-run-matching
+    image: phjppo0918/party-run-matching:latest
     container_name: matching
     restart: always
     ports:
@@ -35,7 +35,7 @@ services:
       - redis
 
   battle:
-    image: phjppo0918/party-run-battle
+    image: phjppo0918/party-run-battle:latest
     container_name: battle
     restart: always
     env_file:
@@ -44,7 +44,7 @@ services:
       - 8082:8080
 
   redis:
-    image: redis
+    image: redis:latest
     container_name: redis
     restart: always
     ports:
