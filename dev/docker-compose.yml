@@ -4,7 +4,7 @@ services:
   gateway:
     build:
       context: ./gateway
-    #restart: always
+    restart: always
     ports:
       - 80:80
     depends_on:
@@ -14,7 +14,8 @@ services:
 
   authentication:
     image: phjppo0918/party-run-authentication
-    #restart: always
+    container_name: authentication
+    restart: always
     ports:
       - 8080:8080
     env_file:
@@ -24,7 +25,8 @@ services:
       
   matching:
     image: phjppo0918/party-run-matching
-    #restart: always
+    container_name: matching
+    restart: always
     ports:
       - 8081:8080
     env_file:
@@ -34,7 +36,8 @@ services:
 
   battle:
     image: phjppo0918/party-run-battle
-    #restart: always
+    container_name: battle
+    restart: always
     env_file:
       - .env
     ports:
@@ -43,6 +46,6 @@ services:
   redis:
     image: redis
     container_name: redis
-    #restart: always
+    restart: always
     ports:
       - 6379:6379
