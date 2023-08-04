@@ -7,19 +7,23 @@ services:
     ports:
       - 80:80
       - 443:443
+    environment:
+      - TZ=Asia/Seoul
     volumes:
       - ./data/nginx:/etc/nginx/conf.d
       - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot  
+      - ./data/certbot/www:/var/www/certbot
     depends_on:
       - authentication
       - matching
       - battle
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"  
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
   certbot:
     image: certbot/certbot
     restart: unless-stopped
+    environment:
+      - TZ=Asia/Seoul
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
@@ -30,17 +34,21 @@ services:
     image: phjppo0918/party-run-authentication
     container_name: authentication
     restart: always
+    environment:
+      - TZ=Asia/Seoul
     ports:
       - 8080:8080
     env_file:
       - .env
     depends_on:
       - redis
-      
+
   matching:
     image: phjppo0918/party-run-matching
     container_name: matching
     restart: always
+    environment:
+      - TZ=Asia/Seoul
     ports:
       - 8081:8080
     env_file:
@@ -52,6 +60,8 @@ services:
     image: phjppo0918/party-run-battle
     container_name: battle
     restart: always
+    environment:
+      - TZ=Asia/Seoul
     env_file:
       - .env
     ports:
@@ -61,5 +71,7 @@ services:
     image: redis:latest
     container_name: redis
     restart: always
+    environment:
+      - TZ=Asia/Seoul
     ports:
       - 6379:6379
