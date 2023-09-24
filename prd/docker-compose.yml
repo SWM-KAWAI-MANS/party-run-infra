@@ -1,0 +1,92 @@
+version: "3"
+
+services:
+  nginx:
+    image: nginx
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - ./data/nginx:/etc/nginx/conf.d
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    depends_on:
+      - authentication
+      - matching
+      - battle
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    depends_on:
+      - nginx
+  authentication:
+    image: phjppo0918/party-run-authentication-prd
+    container_name: authentication
+    restart: always
+    environment:
+      - TZ=Asia/Seoul
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - mysql
+
+  matching:
+    image: phjppo0918/party-run-matching-prd
+    container_name: matching
+    restart: always
+    environment:
+      - TZ=Asia/Seoul
+    ports:
+      - 8081:8080
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+  battle:
+    image: phjppo0918/party-run-battle-prd
+    container_name: battle
+    restart: always
+    environment:
+      - TZ=Asia/Seoul
+    env_file:
+      - .env
+    ports:
+      - 8082:8080
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    environment:
+      - TZ=Asia/Seoul
+    ports:
+      - 6379:6379
+  
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: always
+    ports:
+      - 3306:3306 
+    env_file:
+      - .env
+    volumes:
+      - ./data/mysql/datadir:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
