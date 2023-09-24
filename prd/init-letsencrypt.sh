@@ -3,7 +3,7 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   exit 1
 fi
 
-domains=(dev.partyrun.online)
+domains=(api.partyrun.online)
 rsa_key_size=4096
 data_path="./data/certbot"
 email="phjppo0918@gmail.com" # Adding a valid address is strongly recommended
